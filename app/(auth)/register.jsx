@@ -1,0 +1,89 @@
+import React, { useState } from 'react';
+import { Text } from 'react-native';
+import { Link } from 'expo-router';
+import { useUser } from '../../hooks/useUser'
+import { Colors } from '../../constants/Colors';
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+// themed components
+import ThemedView from '../../components/ThemedView';
+import ThemedText from '../../components/ThemedText';
+import ThemedButton from '../../components/ThemedButton';
+import Spacer from '../../components/Spacer';
+import ThemedTextInput from "../../components/ThemedTextInput";
+
+const Register = () => {
+  const[email, setEmail] = useState('')
+  const[password, setPassword] = useState('')
+  const[error, setError] = useState(null)
+
+  const { register } = useUser()
+
+  const handleSubmit = async () => {
+    setError(null)
+
+    try {
+      await register(email, password)
+    } catch (error) {
+      setError(error.message)
+    }
+  };
+
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Spacer />
+      <ThemedText title={true} style={{ textAlign: 'center', fontSize: 18, marginBottom: 30 }}>
+        Register for an Account
+      </ThemedText>
+
+      <ThemedTextInput 
+      style={{ width: '80%', marginBottom: 20 }}
+      placeholder="Email" 
+      keyboardType="email-address"
+      onChangeText={setEmail}
+      value={email}
+      />
+
+      <ThemedTextInput 
+      style={{ width: '80%', marginBottom: 20 }}
+      placeholder="Password" 
+      onChangeText={setPassword}
+      value={password}
+      secureTextEntry
+      />
+
+{error && (
+  <Text style={{
+    color: Colors.warning,
+    padding: 10,
+    backgroundColor: '#f5c1c8',
+    borderColor: Colors.warning,
+    borderWidth: 1,
+    borderRadius: 6,
+    marginHorizontal: 10,
+    marginBottom: 10, // Add spacing between error and button
+  }}>
+    {error}
+  </Text>
+)}
+
+<ThemedButton 
+  onPress={handleSubmit}
+  style={{ width: '80%', alignItems: 'center', paddingVertical: 12 }} // control vertical padding here
+>
+  <Text style={{ color: '#f2f2f2' }}>Register</Text>
+</ThemedButton>
+
+
+      <Spacer height={100} />
+      <Link href="/login">
+        <ThemedText style={{ textAlign: 'center' }}>
+          Already have an account? Click here to Login
+        </ThemedText>
+      </Link>
+    </ThemedView>
+    </TouchableWithoutFeedback>
+  );
+};
+
+export default Register;
